@@ -5,6 +5,14 @@ import psutil
 import os.path
 import time
 
+# Este es un programa que permite crear archiviosde Log del sistema en ficehros txt.
+# el codigo puede ser modificado a gusto propio para adaptarlo a su arquitectura o distribución, por defecto
+# es windows pero facilmente puede pasar a linux o mac dependiento el uso apra esta herramienta,
+# no soy responsable de el uso malintencionado que pueda ocasionar su uso, solo proporciono la herramienta forense para analisis
+# informaticos. aún asi, tampoco es que sea una super herramienta.
+# @author: Rawier
+
+# Función para ver los programas instalados.
 def get_installed_programs():
     installed_programs = []
     uninstall_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
@@ -12,7 +20,7 @@ def get_installed_programs():
         try:
             keyname = winreg.EnumKey(uninstall_key, i)
             subkey = winreg.OpenKey(uninstall_key, keyname)
-            value = winreg.QueryValueEx(subkey, "DisplayName")[0]
+            value = winreg.QueryASSSDValueEx(subkey, "DisplayName")[0]
             installed_programs.append(value)
             winreg.CloseKey(subkey)
         except WindowsError:
@@ -20,6 +28,7 @@ def get_installed_programs():
     winreg.CloseKey(uninstall_key)
     return installed_programs
 
+# Función para ver los procesos ejecutandose al momento.
 def get_running_processes():
     processes = []
     for process in psutil.process_iter():
@@ -30,6 +39,7 @@ def get_running_processes():
             pass
     return processes
 
+# Función para ver los servicios ejecutandose en el momento.
 def get_running_services():
     services = []
     for service in psutil.win_service_iter():
@@ -40,41 +50,51 @@ def get_running_services():
             pass
     return services
 
+# Función para mostrar la cache dns.
 def get_dns_cache():
     dns_cache = subprocess.check_output(["ipconfig", "/displaydns"]).decode("ISO-8859-1")
     return dns_cache
 
+# Función para mostrar información del sistema.
 def get_system_info():
     system_info = f"Sistema operativo: {platform.system()} {platform.release()} {platform.version()}\n"
     system_info += f"Arquitectura: {platform.machine()}\n"
     system_info += f"Procesador: {platform.processor()}\n"
     system_info += f"Memoria RAM disponible: {psutil.virtual_memory().available / (1024 ** 3):.2f} GB\n"
     system_info += f"Uso de CPU: {psutil.cpu_percent()}%\n"
+    system_info += f"Arquitectura: {platform.architecture()}%\n"
     return system_info
 
+# Función para mostrar archivo Host.
 def get_host_content():
     host_content = subprocess.check_output(["findstr", "/V", "#", r"C:\Windows\System32\drivers\etc\hosts"]).decode(
         "utf-8")
     return host_content
 
+# Función para mostrar conexiones NetBios activas.
 def get_netbios_established():
     connections = psutil.net_connections(kind="udp")
     netbios_established = [conn for conn in connections if conn.status == "ESTABLISHED" and "netbios" in conn.laddr]
     netbios_established_str = "\n".join([f"{conn.laddr[0]}:{conn.laddr[1]} -> {conn.raddr[0]}:{conn.raddr[1]}" for conn in netbios_established])
     return netbios_established_str
 
+# Función para mostrar cache ARP.
 def get_arp_cache():
     arp_cache = subprocess.check_output(["arp", "-a"], encoding="latin-1")
     return arp_cache
 
+# 𝕽♛
+# Función para mostrar procesos activos.
 def get_scheduled_tasks():
     scheduled_tasks = subprocess.check_output(["schtasks.exe", "/query", "/fo", "LIST"], encoding="cp1252")
     return scheduled_tasks
 
+# Función para mostrar conexiones activas.
 def get_active_connections():
     active_connections = subprocess.check_output(["netstat", "-ano"]).decode("latin-1")
     return active_connections
 
+# Función para mostrar uso del disco C:
 def get_disk_info():
     disk_path = os.path.abspath("C:\\")
     created_time = time.ctime(os.path.getctime(disk_path))
@@ -82,6 +102,7 @@ def get_disk_info():
     accessed_time = time.ctime(os.path.getatime(disk_path))
     return f"Fecha de creación del disco: {created_time}\nFecha de modificación del disco: {modified_time}\nÚltimo acceso al disco: {accessed_time}"
 
+# Función para mostrar información de red y WIFI.
 def get_network_info():
     network_info = ""
     # Obtener información de red
@@ -104,6 +125,7 @@ def get_network_info():
         network_info += f"  Bytes enviados: {wifi_info['Wi-Fi'].bytes_sent}\n"
     return network_info
 
+# Función para mostrar unidades mapeadas.
 def ver_unidades():
     unidades = os.popen("wmic logicaldisk get caption").read()
     print(unidades)
@@ -111,6 +133,7 @@ def ver_unidades():
         f.write(unidades)
     print("Archivo exportado como 'unidades.txt'")
 
+# Función para crear todos los ficheros txt en uno solo.
 def crear_all_scan():
     # Recopilar la información de todos los archivos de texto
     with open("procesos.txt", "r") as f:
@@ -270,12 +293,15 @@ while True:
             f.write(network_info)
         print("La información de red y wifi ha sido guardada en el archivo red.txt.")
 
+        # Mostrar unidades mapeadas
     elif choice == "13":
         ver_unidades()
 
+        # Crear un solo fichero para.
     elif choice == "14":
         crear_all_scan()
 
+        # Salir
     elif choice == "15":
         # Salir del programa
         break
