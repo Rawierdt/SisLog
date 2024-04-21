@@ -4,6 +4,8 @@ import platform
 import psutil
 import os.path
 import time
+import winreg
+from colorama import Fore, Style
 
 # Este es un programa que permite crear archiviosde Log del sistema en ficehros txt.
 # el codigo puede ser modificado a gusto propio para adaptarlo a su arquitectura o distribución, por defecto
@@ -12,7 +14,9 @@ import time
 # informaticos. aún asi, tampoco es que sea una super herramienta.
 # @author: Rawier
 
+
 # Función para ver los programas instalados.
+
 def get_installed_programs():
     installed_programs = []
     uninstall_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
@@ -20,7 +24,7 @@ def get_installed_programs():
         try:
             keyname = winreg.EnumKey(uninstall_key, i)
             subkey = winreg.OpenKey(uninstall_key, keyname)
-            value = winreg.QueryASSSDValueEx(subkey, "DisplayName")[0]
+            value = winreg.QueryValueEx(subkey, "DisplayName")[0]  # Corrección aquí
             installed_programs.append(value)
             winreg.CloseKey(subkey)
         except WindowsError:
@@ -28,32 +32,36 @@ def get_installed_programs():
     winreg.CloseKey(uninstall_key)
     return installed_programs
 
+
 # Función para ver los procesos ejecutandose al momento.
 def get_running_processes():
-    processes = []
+    processes_info = ""
     for process in psutil.process_iter():
         try:
             process_name = process.name()
-            processes.append(process_name)
+            processes_info += process_name + "\n"
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    return processes
+    return processes_info
+
 
 # Función para ver los servicios ejecutandose en el momento.
 def get_running_services():
-    services = []
+    services_info = ""
     for service in psutil.win_service_iter():
         try:
             if service.status() == "running":
-                services.append(service.name())
+                services_info += service.name() + "\n"
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    return services
+    return services_info
+
 
 # Función para mostrar la cache dns.
 def get_dns_cache():
     dns_cache = subprocess.check_output(["ipconfig", "/displaydns"]).decode("ISO-8859-1")
     return dns_cache
+
 
 # Función para mostrar información del sistema.
 def get_system_info():
@@ -65,11 +73,19 @@ def get_system_info():
     system_info += f"Arquitectura: {platform.architecture()}%\n"
     return system_info
 
+
 # Función para mostrar archivo Host.
 def get_host_content():
-    host_content = subprocess.check_output(["findstr", "/V", "#", r"C:\Windows\System32\drivers\etc\hosts"]).decode(
-        "utf-8")
+    try:
+        host_content = subprocess.check_output(["findstr", "/V", "#", r"C:\Windows\System32\drivers\etc\hosts"]).decode()
+    except FileNotFoundError:
+        print("El archivo hosts no se encontró.")
+        host_content = ""
+    except subprocess.CalledProcessError as e:
+        print("Error al obtener el contenido del archivo hosts:", e)
+        host_content = ""
     return host_content
+
 
 # Función para mostrar conexiones NetBios activas.
 def get_netbios_established():
@@ -78,10 +94,12 @@ def get_netbios_established():
     netbios_established_str = "\n".join([f"{conn.laddr[0]}:{conn.laddr[1]} -> {conn.raddr[0]}:{conn.raddr[1]}" for conn in netbios_established])
     return netbios_established_str
 
+
 # Función para mostrar cache ARP.
 def get_arp_cache():
     arp_cache = subprocess.check_output(["arp", "-a"], encoding="latin-1")
     return arp_cache
+
 
 # 𝕽♛
 # Función para mostrar procesos activos.
@@ -89,10 +107,12 @@ def get_scheduled_tasks():
     scheduled_tasks = subprocess.check_output(["schtasks.exe", "/query", "/fo", "LIST"], encoding="cp1252")
     return scheduled_tasks
 
+
 # Función para mostrar conexiones activas.
 def get_active_connections():
     active_connections = subprocess.check_output(["netstat", "-ano"]).decode("latin-1")
     return active_connections
+
 
 # Función para mostrar uso del disco C:
 def get_disk_info():
@@ -101,6 +121,7 @@ def get_disk_info():
     modified_time = time.ctime(os.path.getmtime(disk_path))
     accessed_time = time.ctime(os.path.getatime(disk_path))
     return f"Fecha de creación del disco: {created_time}\nFecha de modificación del disco: {modified_time}\nÚltimo acceso al disco: {accessed_time}"
+
 
 # Función para mostrar información de red y WIFI.
 def get_network_info():
@@ -125,6 +146,7 @@ def get_network_info():
         network_info += f"  Bytes enviados: {wifi_info['Wi-Fi'].bytes_sent}\n"
     return network_info
 
+
 # Función para mostrar unidades mapeadas.
 def ver_unidades():
     unidades = os.popen("wmic logicaldisk get caption").read()
@@ -132,62 +154,52 @@ def ver_unidades():
     with open("unidades.txt", "w") as f:
         f.write(unidades)
     print("Archivo exportado como 'unidades.txt'")
+    return unidades  # Devolver la cadena 'unidades'
+
 
 # Función para crear todos los ficheros txt en uno solo.
 def crear_all_scan():
-    # Recopilar la información de todos los archivos de texto
-    with open("procesos.txt", "r") as f:
-        procesos = f.read()
-    with open("programas.txt", "r") as f:
-        programas = f.read()
-    with open("servicios.txt", "r") as f:
-        servicios = f.read()
-    with open("cache_dns.txt", "r") as f:
-        cache_dns = f.read()
-    with open("info_sistema.txt", "r") as f:
-        info_sistema = f.read()
-    with open("host.txt", "r") as f:
-        host = f.read()
-    with open("netbios_establish.txt", "r") as f:
-        netbios_establish = f.read()
-    with open("arp.txt", "r") as f:
-        arp = f.read()
-    with open("tareas_prg.txt", "r") as f:
-        tareas_prg = f.read()
-    with open("scan_cap.txt", "r") as f:
-        scan_cap = f.read()
-    with open("disco.txt", "r") as f:
-        disco = f.read()
-    with open("red.txt", "r") as f:
-        red = f.read()
-    with open("unidades.txt", "r") as f:
-        unidades = f.read()
+    processes = get_running_processes()
+    disk_info = get_disk_info()
+    network_info = get_network_info()
+    installed_programs = get_installed_programs()
+    services = get_running_services()
+    cache_dns = get_dns_cache()
+    info_system = get_system_info()
+    host = get_host_content()
+    netbios_establish = get_netbios_established()
+    arp = get_arp_cache()
+    prg_task = get_scheduled_tasks()
+    scan_cap = get_active_connections()
+    unidades = ver_unidades()  # Llamar a la función y almacenar su resultado
 
-    # Crear un archivo "all_scan.txt" y escribir toda la información recopilada
+    # Escribir la información en un archivo all_scan.txt
     with open("all_scan.txt", "w") as f:
-        f.write("INFORMACIÓN DE PROCESOS:\n\n" + procesos + "\n")
-        f.write("INFORMACIÓN DE PROGRAMAS:\n\n" + programas + "\n")
-        f.write("INFORMACIÓN DE SERVICIOS:\n\n" + servicios + "\n")
-        f.write("INFORMACIÓN DE CACHE DNS:\n\n" + cache_dns + "\n")
-        f.write("INFORMACIÓN DEL SISTEMA:\n\n" + info_sistema + "\n")
-        f.write("INFORMACIÓN DEL HOST:\n\n" + host + "\n")
-        f.write("INFORMACIÓN DE CONEXIONES NETBIOS ESTABLECIDAS:\n\n" + netbios_establish + "\n")
-        f.write("INFORMACIÓN DEL CACHE ARP:\n\n" + arp + "\n")
-        f.write("INFORMACIÓN DE TAREAS PROGRAMADAS:\n\n" + tareas_prg + "\n")
-        f.write("INFORMACIÓN DE CONEXIONES ACTIVAS O PUERTOS ABIERTOS:\n\n" + scan_cap + "\n")
-        f.write("INFORMACIÓN DE FECHA DE CREACIÓN, MODIFICACIÓN Y ÚLTIMO ACCESO A DISCO RAÍZ:\n\n" + disco + "\n")
-        f.write("INFORMACIÓN DE RED Y WIFI:\n\n" + red + "\n")
-        f.write("INFORMACIÓN DE UNIDADES CONECTADAS O MAPEADAS:\n\n" + unidades + "\n")
+        f.write("INFORMACIÓN DE PROCESOS:\n\n" + processes)
+        f.write("INFORMACIÓN DE PROGRAMAS INSTALADOS:\n\n")
+        for program in installed_programs:
+            f.write(program + "\n")
+        f.write("INFORMACIÓN DEL DISCO:\n\n" + disk_info)
+        f.write("INFORMACIÓN DE RED Y WIFI:\n\n" + network_info)
+        f.write("INFORMACIÓN DE SERVICIOS:\n\n" + services)
+        f.write("INFORMACIÓN DE CACHE DNS:\n\n" + cache_dns)
+        f.write("INFORMACIÓN DEL SISTEMA:\n\n" + info_system)
+        f.write("INFORMACIÓN DEL HOST:\n\n" + host)
+        f.write("INFORMACIÓN DE CONEXIONES NETBIOS ESTABLECIDAS:\n\n" + netbios_establish)
+        f.write("INFORMACIÓN DEL CACHE ARP:\n\n" + arp)
+        f.write("INFORMACIÓN DE TAREAS PROGRAMADAS:\n\n" + prg_task)
+        f.write("INFORMACIÓN DE CONEXIONES ACTIVAS O PUERTOS ABIERTOS:\n\n" + scan_cap)
+        f.write("INFORMACIÓN DE UNIDADES CONECTADAS O MAPEADAS:\n\n" + unidades)
 
     print("Archivo exportado como 'all_scan.txt'")
 
 while True:
     mensaje_ascii = ".s5SSSs.                .s                            \n      SS. s.  .s5SSSs.            .s5SSSs.  .s5SSSs.  \n sS    `:; SS.       SS. sS              SS.       SS. \n SS        S%S sS    `:; SS        sS    S%S sS    `:; \n`:;;;;.   S%S `:;;;;.   SS        SS    S%S SS        \n      ;;. S%S       ;;. SS        SS    S%S SS        \n      `:; `:;       `:; SS        SS    `:; SS   ``:; \n.,;   ;,. ;,. .,;   ;,. SS    ;,. SS    ;,. SS    ;,. \n`:;;;;;:' ;:' `:;;;;;:' `:;;;;;:' `:;;;;;:' `:;;;;;:'"
-    print(mensaje_ascii)
-    print("Created by Rawier")
+    print(Fore.LIGHTRED_EX + mensaje_ascii + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "Created by Rawier" + Style.RESET_ALL)
     print("https://github.com/rawierdt/SisLog")
     print(" ")
-    print("Bienvenido, ¿Qué desea hacer?")
+    print(Fore.LIGHTYELLOW_EX + "Bienvenido, ¿Qué desea hacer?" + Style.RESET_ALL)
     print(" ")
     print("1. Ver programas instalados")
     print("2. Ver procesos en ejecución")
@@ -203,16 +215,19 @@ while True:
     print("12. Ver informacion de red y WIFI")
     print("13. Ver unidades mapeadas")
     print("14. Crear todo")
-    print("15. Salir")
-    choice = input("Ingrese el número de su elección: ")
+    print(Fore.RED + "15. Salir" + Style.RESET_ALL)
+    choice = input(Fore.LIGHTCYAN_EX + "Ingrese el número de su elección: " + Style.RESET_ALL)
 
     if choice == "1":
         # Mostrar los programas instalados y guardarlos en un archivo de texto
         programs = get_installed_programs()
+        # Escribir los programas en un archivo de texto
         with open("programas.txt", "w") as f:
             for program in programs:
                 f.write(program + "\n")
-        print(f"Se han encontrado {len(programs)} programas instalados. Los nombres de los programas han sido guardados en el archivo programas.txt.")
+
+        print(
+            f"Se han encontrado {len(programs)} programas instalados. Los nombres de los programas han sido guardados en el archivo programas.txt.")
 
     elif choice == "2":
         # Mostrar los procesos en ejecución y guardarlos en un archivo de texto
