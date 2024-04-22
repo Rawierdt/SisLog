@@ -5,6 +5,8 @@ import psutil
 import os.path
 import time
 import winreg
+import sys
+import os
 from colorama import Fore, Style
 
 # Este es un programa que permite crear archiviosde Log del sistema en ficehros txt.
@@ -12,8 +14,8 @@ from colorama import Fore, Style
 # es windows pero facilmente puede pasar a linux o mac dependiento el uso apra esta herramienta,
 # no soy responsable de el uso malintencionado que pueda ocasionar su uso, solo proporciono la herramienta forense para analisis
 # informaticos. aún asi, tampoco es que sea una super herramienta.
-# @author: Rawier
 
+# @author: Rawier
 
 # Función para ver los programas instalados.
 
@@ -196,7 +198,7 @@ def crear_all_scan():
 while True:
     mensaje_ascii = ".s5SSSs.                .s                            \n      SS. s.  .s5SSSs.            .s5SSSs.  .s5SSSs.  \n sS    `:; SS.       SS. sS              SS.       SS. \n SS        S%S sS    `:; SS        sS    S%S sS    `:; \n`:;;;;.   S%S `:;;;;.   SS        SS    S%S SS        \n      ;;. S%S       ;;. SS        SS    S%S SS        \n      `:; `:;       `:; SS        SS    `:; SS   ``:; \n.,;   ;,. ;,. .,;   ;,. SS    ;,. SS    ;,. SS    ;,. \n`:;;;;;:' ;:' `:;;;;;:' `:;;;;;:' `:;;;;;:' `:;;;;;:'"
     print(Fore.LIGHTRED_EX + mensaje_ascii + Style.RESET_ALL)
-    print(Fore.LIGHTMAGENTA_EX + "Created by Rawier" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "System Audit & Report Generator			[Author : Rawier]" + Style.RESET_ALL)
     print("https://github.com/rawierdt/SisLog")
     print(" ")
     print(Fore.LIGHTYELLOW_EX + "Bienvenido, ¿Qué desea hacer?" + Style.RESET_ALL)
