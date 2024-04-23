@@ -14,7 +14,7 @@ I invite anyone to make modifications to this repository and improve the program
 ## Download
 `git clone git@github.com:Rawierdt/SisLog.git`
 
-[Check the latest release](https://github.com/Rawierdt/Metacrawler-IPTracker/releases/tag/Metacrawlerv1)
+[⬇️ Check the latest release ⬇️](https://github.com/Rawierdt/SisLog/releases/tag/SISLOG)
 
 
 ## Web
