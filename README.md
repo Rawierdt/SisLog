@@ -2,9 +2,11 @@
 
 Windows 8/10/11 forensic tool to generate logs about installed programs, NetBios connections, ARP cache, DNS, processes, network, WIFI, services, computer modifications, scheduled tasks, mapped drives and more, all written in Python and output as TXT files.
 
+You need administrator privileges to avoid bugs with the txt creation.
+
 I invite anyone to make modifications to this repository and improve the program for various operating systems regardless of their architecture or distribution.
 
-![IMG](https://i.ibb.co/t8D4rrC/SisLog.jpg)
+![IMG](https://i.imgur.com/3Pw9O4u.png)
 
 ## Output TXT Example 
 ![IMG](https://i.ibb.co/cx4bMw6/SisLog-2.jpg)
