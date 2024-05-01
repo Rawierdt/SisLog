@@ -1,6 +1,6 @@
 # SisLog
 
-Windows 8/10/11 forensic tool to generate logs about installed programs, NetBios connections, ARP cache, DNS, processes, network, WIFI, services, computer modifications, scheduled tasks, mapped drives and more, all written in Python and output as TXT files.
+Windows 8/10/11 and Linux forensic tool to generate logs about installed programs, NetBios connections, ARP cache, DNS, processes, network, WIFI, services, computer modifications, scheduled tasks, mapped drives and more, all written in Python and output as TXT files.
 
 You need administrator privileges to avoid bugs with the txt creation.
 
@@ -18,7 +18,7 @@ I invite anyone to make modifications to this repository and improve the program
 
 
 ## Web
-- [Rawier's Portfolio](https://rawier.vercel.app)
+- [Portfolio](https://rawier.vercel.app)
 
 ## License
 💜 [License](/LICENSE)
