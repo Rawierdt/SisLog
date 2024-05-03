@@ -9,11 +9,11 @@ import sys
 import os
 from colorama import Fore, Style
 
-# Este es un programa que permite crear archiviosde Log del sistema en ficehros txt.
-# el codigo puede ser modificado a gusto propio para adaptarlo a su arquitectura o distribución, por defecto
-# es windows pero facilmente puede pasar a linux o mac dependiento el uso apra esta herramienta,
-# no soy responsable de el uso malintencionado que pueda ocasionar su uso, solo proporciono la herramienta forense para analisis
-# informaticos. aún asi, tampoco es que sea una super herramienta.
+# Este es un programa que permite crear archivios de Log del sistema en ficehros txt.
+# El codigo puede ser modificado a gusto propio para adaptarlo a su arquitectura o distribución, por defecto
+# Fue creado para windows pero facilmente puede pasar a linux o mac dependiento el uso para esta herramienta,
+# No soy responsable de el uso malintencionado que pueda ocasionar su uso, solo proporciono la herramienta forense para análisis 
+# Informaticos. aún asi, tampoco es que sea una super herramienta.
 
 # @author: Rawier
 
