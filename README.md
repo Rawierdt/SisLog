@@ -2,6 +2,9 @@
 
 Windows 8/10/11 and Linux forensic tool to generate logs about installed programs, NetBios connections, ARP cache, DNS, processes, network, WIFI, services, computer modifications, scheduled tasks, mapped drives and more, all written in Python and output as TXT files.
 
+> [!WARNING]  
+> I
+
 You need administrator privileges to avoid bugs with the txt creation.
 
 I invite anyone to make modifications to this repository and improve the program for various operating systems regardless of their architecture or distribution.
