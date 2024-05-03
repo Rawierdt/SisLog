@@ -10,8 +10,8 @@ try:
         os.system("cls")
     else:  # Linux, macOS, etc.
         os.system("python3 -m pip install colorama")
-        os.system("python -m pip install winreg")
-        os.system("python -m pip install psutil")
+        os.system("python3 -m pip install winreg")
+        os.system("python3 -m pip install psutil")
         os.system("clear")
 
     print("Installed Successfully !!!")
